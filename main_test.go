@@ -93,3 +93,56 @@ func TestPower(t *testing.T) {
 		})
 	}
 }
+
+func TestMakeCounter(t *testing.T) {
+	t.Run("Counter independence", func(t *testing.T) {
+		c1 := MakeCounter(0)
+		c2 := MakeCounter(10)
+
+		if got := c1(); got != 1 {
+			t.Errorf("Counter1 first call = %d, want 1", got)
+		}
+		if got := c2(); got != 11 {
+			t.Errorf("Counter2 first call = %d, want 11", got)
+		}
+		if got := c1(); got != 2 {
+			t.Errorf("Counter1 second call = %d, want 2", got)
+		}
+	})
+}
+
+func TestMakeMultiplier(t *testing.T) {
+	tests := []struct {
+		name   string
+		factor int
+		input  int
+		want   int
+	}{
+		{"Double", 2, 5, 10},
+		{"Triple", 3, 5, 15},
+		{"Multiply by zero", 0, 10, 0},
+		{"Negative factor", -2, 4, -8},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			mult := MakeMultiplier(tt.factor)
+			if got := mult(tt.input); got != tt.want {
+				t.Errorf("MakeMultiplier(%d)(%d) = %d, want %d", tt.factor, tt.input, got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMakeAccumulator(t *testing.T) {
+	t.Run("Shared state interaction", func(t *testing.T) {
+		add, sub, get := MakeAccumulator(100)
+
+		add(50) // 150
+		sub(30) // 120
+
+		if got := get(); got != 120 {
+			t.Errorf("Accumulator final value = %d, want 120", got)
+		}
+	})
+}
