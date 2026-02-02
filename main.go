@@ -2,7 +2,9 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"math"
+	"os"
 )
 
 func Factorial(n int) (int, error) {
@@ -101,4 +103,30 @@ func Compose(f func(int) int, g func(int) int) func(int) int {
 	return func(x int) int {
 		return f(g(x))
 	}
+}
+
+func ExploreProcess() {
+	fmt.Println("=== Process Information ===")
+	//A process ID (PID) is a unique numerical identifier assigned by the OD=S
+	// to every active process to track its excution and resources.
+	fmt.Printf("Current Process ID: %d\n", os.Getpid())
+
+	fmt.Printf("PArent Process ID: %d\n", os.Getpid())
+
+	data := []int{1, 2, 3, 4, 5}
+
+	fmt.Printf("Memory address of slice: %p\n", &data)
+
+	//The slice header contains metadata (pointer, length, capacity),
+	// while the firtst element address is where the actual data resides in memory.
+	fmt.Printf("Memoy address of first element: %p\n", &data[0])
+
+	/* Why process validation is important? It prevents processes from accessing or modifyin the memory
+	of other processes, ensuring system stability and security. Other processses
+	cannot access these memory addresses.*/
+	fmt.Println("Note: Other processes cannot access these memory addresses due to process isolation")
+}
+
+func main() {
+	ExploreProcess()
 }
