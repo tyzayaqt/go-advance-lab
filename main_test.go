@@ -1,6 +1,7 @@
 package main
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -138,11 +139,94 @@ func TestMakeAccumulator(t *testing.T) {
 	t.Run("Shared state interaction", func(t *testing.T) {
 		add, sub, get := MakeAccumulator(100)
 
-		add(50) // 150
-		sub(30) // 120
+		add(50)
+		sub(30)
 
 		if got := get(); got != 120 {
 			t.Errorf("Accumulator final value = %d, want 120", got)
+		}
+	})
+}
+
+func TestApply(t *testing.T) {
+	tests := []struct {
+		name      string
+		nums      []int
+		operation func(int) int
+		want      []int
+	}{
+		{"Square", []int{1, 2, 3}, func(x int) int { return x * x }, []int{1, 4, 9}},
+		{"Double", []int{10, 20}, func(x int) int { return x * 2 }, []int{20, 40}},
+		{"Negate", []int{-1, 5}, func(x int) int { return -x }, []int{1, -5}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Apply(tt.nums, tt.operation); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Apply() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestFilter(t *testing.T) {
+	tests := []struct {
+		name      string
+		nums      []int
+		predicate func(int) bool
+		want      []int
+	}{
+		{
+			name:      "even numbers",
+			nums:      []int{1, 2, 3, 4, 5, 6},
+			predicate: func(x int) bool { return x%2 == 0 },
+			want:      []int{2, 4, 6},
+		},
+		{
+			name:      "numbers greater than 5",
+			nums:      []int{1, 5, 10, 15},
+			predicate: func(x int) bool { return x > 5 },
+			want:      []int{10, 15},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Filter(tt.nums, tt.predicate)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Filter() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestReduce(t *testing.T) {
+	tests := []struct {
+		name      string
+		nums      []int
+		initial   int
+		operation func(int, int) int
+		want      int
+	}{
+		{"Sum", []int{1, 2, 3, 4}, 0, func(acc, curr int) int { return acc + curr }, 10},
+		{"Product", []int{1, 2, 3, 4}, 1, func(acc, curr int) int { return acc * curr }, 24},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Reduce(tt.nums, tt.initial, tt.operation); got != tt.want {
+				t.Errorf("Reduce() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestCompose(t *testing.T) {
+	addTwo := func(x int) int { return x + 2 }
+	double := func(x int) int { return x * 2 }
+
+	t.Run("Double then add two", func(t *testing.T) {
+		f := Compose(addTwo, double)
+		if got := f(5); got != 12 {
+			t.Errorf("Compose(5) = %d, want 12", got)
 		}
 	})
 }
