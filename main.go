@@ -186,4 +186,46 @@ ESCAPE ANALYSIS REPORT:
 
 func main() {
 	ExploreProcess()
+
+	//MATH DEMO LOL
+	fmt.Println("\n=== Math Operations ===")
+	f5, _ := Factorial(5)
+	fmt.Printf("Factorial(5) = %d\n", f5)
+
+	p17, _ := IsPrime(17)
+	fmt.Printf("IsPrime(17) = %v\n", p17)
+
+	pow, _ := Power(2, 8)
+	fmt.Printf("Power(2, 8) = %d\n", pow)
+
+	// 3. Closure Demo
+	fmt.Println("\n=== Closure Demonstration ===")
+	c1 := MakeCounter(0)
+	c2 := MakeCounter(100)
+	fmt.Printf("Counter1: %d, %d\n", c1(), c1())
+	fmt.Printf("Counter2: %d, %d\n", c2(), c2())
+
+	double := MakeMultiplier(2)
+	fmt.Printf("Double 10: %d\n", double(10))
+
+	// 4. Higher-Order Functions Demo
+	fmt.Println("\n=== Higher-Order Functions ===")
+	nums := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+	fmt.Printf("Original: %v\n", nums)
+
+	squared := Apply(nums, func(x int) int { return x * x })
+	fmt.Printf("Squared: %v\n", squared)
+
+	evens := Filter(nums, func(x int) bool { return x%2 == 0 })
+	fmt.Printf("Evens: %v\n", evens)
+
+	sum := Reduce(nums, 0, func(acc, curr int) int { return acc + curr })
+	fmt.Printf("Sum: %d\n", sum)
+
+	// 5. Pointer Demo
+	fmt.Println("\n=== Pointer Demo ===")
+	a, b := 5, 10
+	fmt.Printf("Before Swap: a=%d, b=%d\n", a, b)
+	SwapPointers(&a, &b)
+	fmt.Printf("After Swap:  a=%d, b=%d\n", a, b)
 }
