@@ -230,3 +230,34 @@ func TestCompose(t *testing.T) {
 		}
 	})
 }
+
+func TestSwapPointers(t *testing.T) {
+	// Correct: Create actual variables on the stack
+	x, y := 10, 20
+
+	// Correct: Pass the addresses of those variables
+	SwapPointers(&x, &y)
+
+	if x != 20 || y != 10 {
+		t.Errorf("Swap failed: x=%d, y=%d", x, y)
+	}
+}
+
+func TestSwapValues(t *testing.T) {
+	tests := []struct {
+		name         string
+		a, b         int
+		wantA, wantB int
+	}{
+		{name: "swap 5 and 10", a: 5, b: 10, wantA: 10, wantB: 5},
+		{name: "swap 0 and -1", a: 0, b: -1, wantA: -1, wantB: 0},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotA, gotB := SwapValues(tt.a, tt.b)
+			if gotA != tt.wantA || gotB != tt.wantB {
+				t.Errorf("SwapValues() = %v, %v; want %v, %v", gotA, gotB, tt.wantA, tt.wantB)
+			}
+		})
+	}
+}
